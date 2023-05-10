@@ -189,7 +189,7 @@ describe("payTransfer", () => {
         id: 1,
         licensePlate: "LFTS34",
         email: "usuario1@autored.cl",
-        status: "CREADA",
+        status: "PAGADA",
       },
       {
         id: 2,
@@ -214,6 +214,12 @@ describe("payTransfer", () => {
         licensePlate: "BDLS99",
         email: "usuario5@autored.cl",
         status: "FINALIZADA",
+      },
+      {
+        id: 6,
+        licensePlate: "LFTS35",
+        email: "usuario6@autored.cl",
+        status: "CREADA",
       }
     );
   });
@@ -232,21 +238,18 @@ describe("payTransfer", () => {
 
   it("should throw an error if the transfer has already been finished or aborted", () => {
     expect(() => payTransfer("usuario5@autored.cl", "BDLS99")).toThrow(
-      "La transferencia ya ha sido pagada"
+      "La transferencia ya ha sido finalizada o abortada"
     );
   });
 
   it("should change the status of the transfer to 'PAGADA'", () => {
-    const transfer = payTransfer("usuario1@autored.cl", "LFTS34");
+    const transfer = payTransfer("usuario3@autored.cl", "BDLS99");
     expect(transfer.status).toBe("PAGADA");
   });
 
   it("should change the status of all transfers with the same license plate and different email to 'ABORTADA' if one of them is paid", () => {
-    payTransfer("usuario3@autored.cl", "BDLS99");
-    const abortedTransfers = transfers.filter(
-      (transfer) =>
-        transfer.licensePlate === "BDLS99" && transfer.status === "ABORTADA"
-    );
-    expect(abortedTransfers.length).toBe(1);
+    payTransfer("usuario6@autored.cl", "LFTS35");
+
+    expect(transfers[1].status).toBe("ABORTADA");
   });
 });

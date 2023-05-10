@@ -99,8 +99,7 @@ const createTransfer = (id, licensePlate, email, status) => {
         transfer.email === email &&
         (transfer.status === "CREADA" || transfer.status === "PAGADA")
     );
-    console.log(access);
-    console.log(licensePlate, email);
+
     if (access.length > 0) {
       throw new Error(
         "Ya existe una transferencia con esta patente y correo pendiente"
@@ -133,30 +132,30 @@ const payTransfer = (email, licensePlate) => {
     throw new Error("La transferencia ya ha sido pagada");
   }
   if (transfer.status === "FINALIZADA" || transfer.status === "ABORTADA") {
-    throw new Error("La transferencia ya ha sido pagada");
+    throw new Error("La transferencia ya ha sido finalizada o abortada");
   }
   // si la transferencia pasa todas las validaciones, se cambia su estado a "PAGADA"
   transfer.status = "PAGADA";
 
   //Si hay múltiples transferencias con misma patente y distinto correo, y una de estas transferencias avanza al estado 'PAGADA', entonces todas las otras transferencias cambian al estado 'ABORTADA'.
-  const samePlateTransfers = transfers.filter(
-    (transfer) =>
-      transfer.licensePlate === licensePlate && transfer.email !== email
-  );
-  const anyPaid = samePlateTransfers.some(
-    (transfer) => transfer.status === "PAGADA"
-  );
-  if (anyPaid) {
-    transfers.forEach((transfer) => {
-      if (transfer.licensePlate === licensePlate && transfer.email !== email) {
-        transfer.status = "ABORTADA";
-      }
-    });
-  }
+ 
+    transfers
+      .filter(
+        (t) =>
+          t.licensePlate === licensePlate &&
+          t.email !== email &&
+          t.status !== "FINALIZADA"
+      )
+      .forEach((t) => (t.status = "ABORTADA"));
+  
 
   return transfer;
 };
 
+
+
+    console.log(transfers);
+ 
 
 module.exports = {
   payTransfer,
