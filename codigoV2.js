@@ -80,20 +80,13 @@ const createTransfer = (id, licensePlate, email, status) => {
       throw new Error("Patente no valida");
     }
     // si la transferencia ya está PAGADA no se permite crear otra con la misma patente
-    console.log(id, licensePlate, email, status);
-    console.log(transfers);
-    console.log(
-      transfers.find(
-        (transfer) =>
-          transfer.licensePlate === licensePlate && transfer.status === "PAGADA"
-      )
+
+    const pass = transfers.filter(
+      (transfer) =>
+        transfer.licensePlate == licensePlate && transfer.status == "PAGADA"
     );
-    if (
-      transfers.find(
-        (transfer) =>
-          transfer.licensePlate === licensePlate && transfer.status === "PAGADA"
-      )
-    ) {
+
+    if (pass.length > 0) {
       throw new Error(
         "No se puede crear otra transferencia con la misma patente, ya hay una pagada"
       );
@@ -104,8 +97,10 @@ const createTransfer = (id, licensePlate, email, status) => {
       (transfer) =>
         transfer.licensePlate === licensePlate &&
         transfer.email === email &&
-        (transfer.status === "FINALIZADA" || transfer.status === "ABORTADA")
+        (transfer.status === "CREADA" || transfer.status === "PAGADA")
     );
+    console.log(access);
+    console.log(licensePlate, email);
     if (access.length > 0) {
       throw new Error(
         "Ya existe una transferencia con esta patente y correo pendiente"
@@ -162,7 +157,6 @@ const payTransfer = (email, licensePlate) => {
   return transfer;
 };
 
-console.log(createTransfer(1, "LFTS34", "usuario1@autored.cl", "CREADA"));
 
 module.exports = {
   payTransfer,

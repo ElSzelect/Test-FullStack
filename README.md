@@ -1,4 +1,9 @@
 
+Para correr los test:
+
+npm install
+npx jest
+
 # Autored - Test Full-Stack
 
 Por medio de este test se evaluarán algunos de tus conocimientos que nos interesan como desarrollador.
